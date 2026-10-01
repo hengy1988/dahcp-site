@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Da Honolulu Cheese Podcast</title>
+<meta name="description" content="Da Honolulu Cheese Podcast: Lions, Packers and Bears talk every week with Ryan, Miran and Matt. Episodes, NFC North records, and every place to listen and follow.">
+<meta property="og:title" content="Da Honolulu Cheese Podcast">
+<meta property="og:description" content="Lions, Packers and Bears talk every week. Listen, follow and send in your questions.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dahcp.com/">
+<meta property="og:image" content="https://dahcp.com/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@HonoluluCheese">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Graduate&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: a night-game football field. Yard lines run down the page, a scoreboard sits under the hero, episodes read like a play-by-play log. Single committed look (dark turf). */
+:root {
+  --turf: #15171b;
+  --turf-2: #1d2026;
+  --turf-3: #262a31;
+  --chalk: #f3f1e8;
+  --chalk-dim: #b6bac2;
+  --line: rgba(243, 241, 232, 0.14);
+  --cheese: #ffc629;
+  --cheese-ink: #2a1f00;
+  --lions: #1f8ccf;
+  --packers: #3d8b5a;
+  --bears: #e8702a;
+  --lions-blue: #0076b6;
+  --lions-silver: #b0b7bc;
+  --gb-green: #203731;
+  --gb-gold: #ffb612;
+  --chi-navy: #0b162a;
+  --chi-orange: #c83803;
+  --f-display: "Graduate", "Rockwell", "Georgia", serif;
+  --f-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --f-data: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--turf); }
+body { margin: 0; }
+img { max-width: 100%; }
+body {
+  background: var(--turf);
+  color: var(--chalk);
+  font: 16px/1.6 var(--f-body);
+  padding-inline: 16px;
+  /* yard lines every 5 "yards" */
+  background-image:
+    repeating-linear-gradient(to bottom, transparent 0 139px, var(--line) 139px 141px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.012) 0 60px, transparent 60px 120px);
+}
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--cheese); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 1080px; margin: 0 auto; }
+
+/* nav */
+nav.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; flex-wrap: wrap; }
+.mark { font-family: var(--f-display); font-size: 18px; letter-spacing: 0.02em; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+
+nav.top ul { list-style: none; display: flex; gap: 22px; margin: 0; padding: 0; font-family: var(--f-data); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 15px; }
+nav.top ul a { text-decoration: none; color: var(--chalk-dim); }
+nav.top ul a:hover { color: var(--cheese); }
+
+/* hero */
+.hero { padding-block: 48px 36px; position: relative; }
+.eyebrow { font-family: var(--f-data); font-weight: 600; text-transform: uppercase; letter-spacing: 0.16em; color: var(--cheese); font-size: 15px; margin: 0 0 14px; }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(40px, 7.4vw, 84px); line-height: 0.95; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h1 .da { display: block; font-size: 0.42em; color: var(--cheese); letter-spacing: 0.08em; margin-bottom: 6px; }
+h1 .outline { color: transparent; -webkit-text-stroke: 2px var(--chalk); }
+.lede { max-width: 58ch; color: var(--chalk-dim); font-size: 18px; margin: 22px 0 0; }
+.teams { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.team { font-family: var(--f-data); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 14px; padding: 6px 12px 5px; border-radius: 4px; border: 1.5px solid currentColor; }
+.team.l { color: var(--lions); } .team.p { color: var(--packers); } .team.b { color: var(--bears); }
+.team.p { color: #6cc28c; }
+
+/* scoreboard */
+.board { display: grid; grid-template-columns: repeat(4, 1fr); background: #0e1013; border: 2px solid #2c3038; border-radius: 10px; overflow: hidden; margin-top: 36px; }
+.board div { padding: 16px 18px; border-right: 1px solid #23262c; min-width: 0; }
+.board div:last-child { border-right: 0; }
+.board .k { font-family: var(--f-data); text-transform: uppercase; letter-spacing: 0.14em; color: var(--chalk-dim); font-size: 13px; font-weight: 600; }
+.board .v { font-family: var(--f-data); font-weight: 700; font-size: 40px; line-height: 1.1; color: var(--cheese); font-variant-numeric: tabular-nums; text-shadow: 0 0 14px rgba(255, 198, 41, 0.35); }
+.board .v small { font-size: 18px; color: var(--chalk-dim); text-shadow: none; }
+
+/* sections */
+section { padding-block: 56px; }
+.sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(28px, 4.5vw, 40px); margin: 0; line-height: 1.1; }
+.sec-head .note { color: var(--chalk-dim); font-size: 15px; }
+
+/* latest */
+.latest { display: grid; grid-template-columns: 1.4fr 1fr; gap: 0; background: var(--cheese); color: var(--cheese-ink); border-radius: 14px; overflow: hidden; }
+.latest .body { padding: 30px 32px; min-width: 0; }
+.latest .tag { font-family: var(--f-data); font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; font-size: 14px; }
+.latest h3 { font-family: var(--f-display); font-weight: 400; font-size: clamp(24px, 3.4vw, 34px); line-height: 1.12; margin: 10px 0 12px; text-wrap: balance; }
+.latest .meta { font-family: var(--f-data); font-weight: 600; font-size: 16px; letter-spacing: 0.04em; }
+.latest .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-data); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 15px; padding: 11px 18px 10px; border-radius: 999px; text-decoration: none; transition: transform .15s ease; }
+.btn:hover { transform: translateY(-2px); }
+.btn.dark { background: var(--cheese-ink); color: var(--cheese); }
+.btn.ghost { border: 2px solid var(--cheese-ink); color: var(--cheese-ink); }
+.latest .field { background: var(--turf-3); position: relative; min-height: 220px; }
+.latest .field svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* platforms + socials */
+.links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.link { display: flex; flex-direction: column; gap: 6px; padding: 20px; background: var(--turf-2); border: 1px solid var(--line); border-radius: 12px; text-decoration: none; min-width: 0; transition: border-color .15s, transform .15s; }
+.link:hover { border-color: var(--cheese); transform: translateY(-2px); }
+.link .ico { width: 30px; height: 30px; color: var(--cheese); }
+.link b { font-family: var(--f-data); font-size: 21px; font-weight: 700; letter-spacing: 0.02em; margin-top: 6px; }
+.link span { color: var(--chalk-dim); font-size: 14px; overflow-wrap: anywhere; }
+.sub { font-family: var(--f-data); text-transform: uppercase; letter-spacing: 0.14em; color: var(--chalk-dim); font-weight: 600; font-size: 14px; margin: 34px 0 12px; }
+
+/* episodes */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.chip { font: 600 14px/1 var(--f-data); text-transform: uppercase; letter-spacing: 0.1em; padding: 9px 14px 8px; border-radius: 999px; border: 1.5px solid var(--line); background: transparent; color: var(--chalk-dim); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--chalk); color: var(--turf); border-color: var(--chalk); }
+.eps { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--chalk); }
+.ep { display: grid; grid-template-columns: 78px 1fr auto; gap: 18px; align-items: center; padding: 16px 4px; border-bottom: 1px solid var(--line); }
+.ep .num { font-family: var(--f-data); font-weight: 700; font-size: 28px; color: var(--cheese); font-variant-numeric: tabular-nums; line-height: 1; }
+.ep .num small { display: block; font-size: 12px; letter-spacing: 0.14em; color: var(--chalk-dim); font-weight: 600; }
+.ep .t { min-width: 0; }
+.ep .t a { font-weight: 600; font-size: 17px; text-decoration: none; }
+.ep .t a:hover { color: var(--cheese); text-decoration: underline; text-underline-offset: 3px; }
+.ep .d { color: var(--chalk-dim); font-size: 14px; margin-top: 2px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.dot.l { background: var(--lions-blue); } .dot.p { background: var(--gb-gold); } .dot.b { background: var(--chi-orange); }
+.ep .go { font-family: var(--f-data); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 14px; color: var(--cheese); text-decoration: none; white-space: nowrap; }
+.empty { color: var(--chalk-dim); padding: 20px 4px; }
+.more { margin-top: 22px; }
+.more .btn { background: var(--chalk); color: var(--turf); }
+
+/* hosts */
+.hosts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.host { background: var(--turf-2); border: 1px solid var(--line); border-radius: 12px; padding: 22px; display: flex; gap: 16px; align-items: center; min-width: 0; }
+.host .av { flex: none; width: 58px; height: 58px; border-radius: 50%; background: var(--cheese); color: var(--cheese-ink); font-family: var(--f-display); font-size: 26px; display: grid; place-items: center; }
+.host b { font-family: var(--f-data); font-size: 22px; font-weight: 700; display: block; line-height: 1.1; }
+.host span { color: var(--chalk-dim); font-size: 14px; }
+
+
+.navlogo { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--cheese); }
+.hero-grid { display: grid; grid-template-columns: 1fr minmax(0, 380px); gap: 40px; align-items: center; }
+.hero-txt { min-width: 0; }
+.hero-logo { width: 100%; height: auto; aspect-ratio: 1; max-width: 100%; border-radius: 28px; border: 3px solid var(--cheese); box-shadow: 0 18px 50px rgba(0,0,0,.45); transform: rotate(2deg); transition: transform .3s ease; }
+.hero-logo:hover { transform: rotate(0deg) scale(1.02); }
+@media (max-width: 820px) { .hero-grid { grid-template-columns: 1fr; } .hero-logo { max-width: 300px; order: -1; transform: rotate(-2deg); } }
+
+/* tricolor stripe */
+.tri { display: grid; grid-template-columns: repeat(3, 1fr); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 26px; max-width: 420px; }
+.tri i:nth-child(1) { background: var(--lions-blue); } .tri i:nth-child(2) { background: var(--gb-gold); } .tri i:nth-child(3) { background: var(--chi-orange); }
+
+/* division */
+.div3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.tm { position: relative; overflow: hidden; border-radius: 14px; padding: 26px 24px 24px; min-height: 290px; display: flex; flex-direction: column; min-width: 0; isolation: isolate; }
+.tm::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .9; }
+.tm .city { font-family: var(--f-data); font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; font-size: 14px; }
+.tm .name { font-family: var(--f-display); font-size: clamp(34px, 4.2vw, 48px); line-height: 1; margin: 6px 0 0; }
+.tm dl { margin: auto 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 15px; padding-top: 22px; }
+.tm dt { font-family: var(--f-data); font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; font-size: 12px; opacity: .75; padding-top: 3px; }
+.tm dd { margin: 0; font-weight: 600; }
+.tm .sw { display: flex; gap: 6px; margin-top: 14px; }
+.tm .sw i { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,255,255,.55); }
+.tm .ghost-num { position: absolute; right: -8px; top: 34px; font-family: var(--f-display); font-size: 150px; line-height: 1; opacity: .12; z-index: -1; pointer-events: none; }
+.tm.det { background: var(--lions-blue); color: #fff; }
+.tm.det::before { background: repeating-linear-gradient(90deg, transparent 0 34px, rgba(176,183,188,.18) 34px 40px); }
+.tm.gb { background: var(--gb-green); color: #fff; }
+.tm.gb::before { background: linear-gradient(180deg, var(--gb-gold) 0 8px, transparent 8px 14px, var(--gb-gold) 14px 17px, transparent 17px); opacity: .85; }
+.tm.gb .name { color: var(--gb-gold); }
+.tm.chi { background: var(--chi-navy); color: #fff; }
+.tm.chi::before { background: repeating-linear-gradient(135deg, transparent 0 26px, rgba(200,56,3,.22) 26px 32px); }
+.tm.chi .name { color: #ff7a3d; }
+.tm .rec { font-family: var(--f-data); font-weight: 700; font-size: 58px; line-height: 1; margin-top: 16px; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.tm .rec small { display: block; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; opacity: .8; margin-bottom: 4px; }
+.tm .pl { font-family: var(--f-data); font-weight: 600; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; opacity: .9; }
+
+/* standings strip */
+.stand { margin-top: 18px; background: #0e1013; border: 2px solid #2c3038; border-radius: 10px; overflow-x: auto; }
+.stand table { width: 100%; border-collapse: collapse; font-family: var(--f-data); font-variant-numeric: tabular-nums; min-width: 420px; }
+.stand th, .stand td { padding: 10px 16px; text-align: left; font-size: 17px; border-bottom: 1px solid #23262c; }
+.stand tr:last-child td { border-bottom: 0; }
+.stand th { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--chalk-dim); font-weight: 600; }
+.stand td.n { color: var(--cheese); font-weight: 700; }
+.stand td.t { font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.stand td.t i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.stand .upd { padding: 10px 16px; font-size: 13px; color: var(--chalk-dim); border-top: 1px solid #23262c; font-family: var(--f-body); }
+
+/* ask the show */
+.ask { display: grid; grid-template-columns: 1fr 1.3fr; gap: 28px; background: var(--turf-2); border: 1px solid var(--line); border-radius: 14px; padding: 30px; }
+.ask > div { min-width: 0; }
+.ask .pitch p { color: var(--chalk-dim); margin: 12px 0 0; max-width: 42ch; }
+.ask .tagline { font-family: var(--f-display); font-size: 22px; color: var(--cheese); margin-top: 18px; }
+.ask form { display: grid; gap: 14px; }
+.ask label { font-family: var(--f-data); font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; font-size: 13px; color: var(--chalk-dim); display: grid; gap: 6px; }
+.ask input, .ask select, .ask textarea { font: 16px/1.4 var(--f-body); color: var(--chalk); background: var(--turf); border: 1.5px solid var(--line); border-radius: 8px; padding: 11px 12px; width: 100%; text-transform: none; letter-spacing: 0; }
+.ask textarea { min-height: 120px; resize: vertical; }
+.ask input:focus, .ask select:focus, .ask textarea:focus { outline: none; border-color: var(--cheese); }
+.ask .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ask button[type="submit"] { justify-self: start; border: 0; cursor: pointer; background: var(--cheese); color: var(--cheese-ink); }
+.ask .err { color: #ff9b7a; font-size: 14px; margin: 0; }
+.sent { background: var(--turf); border: 1.5px solid var(--cheese); border-radius: 10px; padding: 18px; display: grid; gap: 12px; }
+.sent b { font-family: var(--f-data); font-size: 20px; }
+.sent pre { margin: 0; white-space: pre-wrap; font: 15px/1.5 var(--f-body); color: var(--chalk-dim); background: var(--turf-2); border-radius: 8px; padding: 12px; overflow-wrap: anywhere; }
+.sent .acts { display: flex; flex-wrap: wrap; gap: 10px; }
+.sent .acts .btn { background: var(--chalk); color: var(--turf); border: 0; cursor: pointer; }
+.sent .acts .btn.alt { background: transparent; color: var(--chalk); border: 2px solid var(--line); }
+.sent .hint { font-size: 14px; color: var(--chalk-dim); margin: 0; }
+.hi-note { margin-top: 16px; color: var(--chalk-dim); font-size: 15px; max-width: 70ch; }
+.hi-note b { color: var(--lions); }
+
+/* team chips colored */
+.chip[data-f="l"][aria-pressed="true"] { background: var(--lions-blue); border-color: var(--lions-blue); color: #fff; }
+.chip[data-f="p"][aria-pressed="true"] { background: var(--gb-green); border-color: var(--gb-gold); color: var(--gb-gold); }
+.chip[data-f="b"][aria-pressed="true"] { background: var(--chi-navy); border-color: var(--chi-orange); color: #ff7a3d; }
+.chip[data-f="l"] { border-color: rgba(0,118,182,.7); }
+.chip[data-f="p"] { border-color: rgba(255,182,18,.6); }
+.chip[data-f="b"] { border-color: rgba(200,56,3,.8); }
+
+footer { padding-block: 40px 56px; border-top: 1px solid var(--line); color: var(--chalk-dim); font-size: 14px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer .mark { color: var(--chalk); }
+
+@media (max-width: 820px) {
+  .latest { grid-template-columns: 1fr; }
+  .latest .field { min-height: 150px; order: -1; }
+  .links { grid-template-columns: repeat(2, 1fr); }
+  .hosts { grid-template-columns: 1fr; }
+  .div3 { grid-template-columns: 1fr; }
+  .ask { grid-template-columns: 1fr; padding: 22px 18px; }
+  .ask .row2 { grid-template-columns: 1fr; }
+  .tm { min-height: 0; }
+  .board { grid-template-columns: repeat(2, 1fr); }
+  .board div:nth-child(2) { border-right: 0; }
+  .board div:nth-child(-n+2) { border-bottom: 1px solid #23262c; }
+}
+@media (max-width: 520px) {
+  nav.top ul { gap: 14px; font-size: 14px; }
+  .ep { grid-template-columns: 56px 1fr; }
+  .ep .go { grid-column: 2; }
+  .latest .body { padding: 24px 20px; }
+  .board .v { font-size: 32px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <nav class="top" aria-label="Main">
+    <a class="mark" href="#top">
+      <img class="navlogo" src="logo.jpg" alt="" width="36" height="36">
+      DA HCP
+    </a>
+    <ul>
+      <li><a href="#division">Teams</a></li>
+      <li><a href="#listen">Listen</a></li>
+      <li><a href="#episodes">Episodes</a></li>
+      <li><a href="#ask">Ask</a></li>
+      <li><a href="#crew">The Crew</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-grid"><div class="hero-txt">
+    <p class="eyebrow">NFC North talk, straight outta Honolulu</p>
+    <h1><span class="da">Da</span>Honolulu <span class="outline">Cheese</span> Podcast</h1>
+    <p class="lede">Ryan, Miran and Matt break down the Lions, Packers and Bears every week, plus everything else around the NFL. News, recaps, predictions and plenty of arguing.</p>
+    <div class="teams" aria-label="Teams covered">
+      <span class="team l">Lions</span><span class="team p">Packers</span><span class="team b">Bears</span><span class="team" style="color:var(--chalk-dim)">+ the rest of the league</span>
+    </div>
+    <div class="tri" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+    <img class="hero-logo" src="logo.jpg" alt="Da Honolulu Cheese Podcast logo: a bear, a lion and a cheesehead fan around a microphone and football" width="560" height="560">
+    </div>
+
+    <div class="board" role="list" aria-label="Show stats">
+      <div role="listitem"><div class="k">Episodes</div><div class="v">123</div></div>
+      <div role="listitem"><div class="k">Apple rating</div><div class="v">4.8<small> / 5</small></div></div>
+      <div role="listitem"><div class="k">Season</div><div class="v">2026</div></div>
+      <div role="listitem"><div class="k">Hosts</div><div class="v">3</div></div>
+    </div>
+  </header>
+
+  <section id="latest" aria-labelledby="latest-h">
+    <div class="sec-head"><h2 id="latest-h">Latest episode</h2></div>
+    <article class="latest">
+      <div class="body">
+        <div class="tag" id="latest-tag">Ep. 123</div>
+        <h3 id="latest-title">Packers Stunned! Lions Win a Fun One, Bears Make a Statement</h3>
+        <div class="meta" id="latest-date">September 30, 2026</div>
+        <div class="cta">
+          <a class="btn dark" id="latest-play" href="https://honolulucheese.buzzsprout.com/2299439/episodes/19885221-packers-stunned-lions-win-a-fun-one-bears-make-a-statement-ep-123" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>Play episode</a>
+          <a class="btn ghost" href="https://www.youtube.com/@DaHonoluluCheesePodcast" target="_blank" rel="noopener">Watch on YouTube</a>
+        </div>
+      </div>
+      <div class="field" aria-hidden="true">
+        <svg viewBox="0 0 300 220" preserveAspectRatio="xMidYMid slice">
+          <rect width="300" height="220" fill="#2f5a3f"/>
+          <g stroke="#f3f1e8" stroke-opacity=".35" stroke-width="2">
+            <line x1="40" y1="0" x2="40" y2="220"/><line x1="100" y1="0" x2="100" y2="220"/><line x1="160" y1="0" x2="160" y2="220"/><line x1="220" y1="0" x2="220" y2="220"/><line x1="280" y1="0" x2="280" y2="220"/>
+          </g>
+          <g fill="#f3f1e8" fill-opacity=".5" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="22">
+            <text x="100" y="40" text-anchor="middle">3 0</text><text x="160" y="40" text-anchor="middle">4 0</text><text x="220" y="40" text-anchor="middle">5 0</text>
+          </g>
+          <!-- play diagram -->
+          <g fill="none" stroke="#ffc629" stroke-width="3" stroke-linecap="round">
+            <path d="M70 150 C 110 150, 120 100, 170 95 S 240 120, 262 88" stroke-dasharray="7 7"/>
+            <path d="M254 80 L263 87 L253 94"/>
+          </g>
+          <g fill="none" stroke="#f3f1e8" stroke-width="3">
+            <circle cx="70" cy="150" r="9"/><circle cx="100" cy="172" r="9"/><circle cx="100" cy="128" r="9"/>
+          </g>
+          <g stroke="#e8702a" stroke-width="3" stroke-linecap="round">
+            <path d="M180 140 l12 12 M192 140 l-12 12"/><path d="M200 60 l12 12 M212 60 l-12 12"/>
+          </g>
+        </svg>
+      </div>
+    </article>
+  </section>
+
+  <section id="division" aria-labelledby="div-h">
+    <div class="sec-head"><h2 id="div-h">The NFC North, covered</h2><span class="note">Three teams, three hosts, one division</span></div>
+    <div class="div3">
+      <article class="tm det">
+        <span class="ghost-num" aria-hidden="true">DET</span>
+        <div class="city">Detroit</div>
+        <h3 class="name">Lions</h3>
+        <div class="rec" data-team="DET"><small>2026 record</small><span class="wl">–</span></div>
+        <div class="pl" data-place="DET"></div>
+        <div class="sw" aria-label="Team colors: Honolulu Blue and Silver"><i style="background:var(--lions-blue)"></i><i style="background:var(--lions-silver)"></i></div>
+        <dl>
+          <dt>Home</dt><dd>Ford Field</dd>
+          <dt>Colors</dt><dd>Honolulu Blue &amp; Silver</dd>
+          <dt>Since</dt><dd>1930</dd>
+        </dl>
+      </article>
+      <article class="tm gb">
+        <span class="ghost-num" aria-hidden="true">GB</span>
+        <div class="city">Green Bay</div>
+        <h3 class="name">Packers</h3>
+        <div class="rec" data-team="GB"><small>2026 record</small><span class="wl">–</span></div>
+        <div class="pl" data-place="GB"></div>
+        <div class="sw" aria-label="Team colors: Dark Green and Gold"><i style="background:var(--gb-green)"></i><i style="background:var(--gb-gold)"></i></div>
+        <dl>
+          <dt>Home</dt><dd>Lambeau Field</dd>
+          <dt>Colors</dt><dd>Green &amp; Gold</dd>
+          <dt>Since</dt><dd>1919</dd>
+        </dl>
+      </article>
+      <article class="tm chi">
+        <span class="ghost-num" aria-hidden="true">CHI</span>
+        <div class="city">Chicago</div>
+        <h3 class="name">Bears</h3>
+        <div class="rec" data-team="CHI"><small>2026 record</small><span class="wl">–</span></div>
+        <div class="pl" data-place="CHI"></div>
+        <div class="sw" aria-label="Team colors: Navy and Orange"><i style="background:var(--chi-navy)"></i><i style="background:var(--chi-orange)"></i></div>
+        <dl>
+          <dt>Home</dt><dd>Soldier Field</dd>
+          <dt>Colors</dt><dd>Navy &amp; Orange</dd>
+          <dt>Since</dt><dd>1920</dd>
+        </dl>
+      </article>
+    </div>
+    <div class="stand">
+      <table>
+        <thead><tr><th>#</th><th>NFC North</th><th>W</th><th>L</th><th>T</th><th>Recent</th></tr></thead>
+        <tbody id="stand-body"></tbody>
+      </table>
+      <div class="upd" id="stand-upd"></div>
+    </div>
+    <p class="hi-note">Honolulu Blue plus Cheesehead gold. The name says it all.</p>
+  </section>
+
+  <section id="listen" aria-labelledby="listen-h">
+    <div class="sec-head"><h2 id="listen-h">Listen &amp; follow</h2><span class="note">Every place to find the show</span></div>
+    <p class="sub">Listen</p>
+    <div class="links">
+      <a class="link" href="https://podcasts.apple.com/us/podcast/da-honolulu-cheese-podcast/id1725228146" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="10" r="3"/><path d="M12 13v8"/><path d="M6.3 16.5A8 8 0 1 1 17.7 16.5"/></svg>
+        <b>Apple Podcasts</b><span>Subscribe &amp; rate the show</span></a>
+      <a class="link" href="https://www.youtube.com/@DaHonoluluCheesePodcast" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg>
+        <b>YouTube</b><span>@DaHonoluluCheesePodcast</span></a>
+      <a class="link" href="https://www.iheart.com/podcast/269-da-honolulu-cheese-podcast-142338052/" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+        <b>iHeartRadio</b><span>Stream every episode</span></a>
+      <a class="link" href="https://honolulucheese.buzzsprout.com/" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>
+        <b>Web player</b><span>Full archive on Buzzsprout</span></a>
+    </div>
+    <p class="sub">Follow</p>
+    <div class="links">
+      <a class="link" href="https://www.instagram.com/honolulucheesepodcast/" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        <b>Instagram</b><span>@honolulucheesepodcast</span></a>
+      <a class="link" href="https://x.com/HonoluluCheese" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20"/></svg>
+        <b>X</b><span>@HonoluluCheese</span></a>
+      <a class="link" href="https://www.youtube.com/@DaHonoluluCheesePodcast" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        <b>Clips &amp; video</b><span>Full episodes on YouTube</span></a>
+      <a class="link" href="https://linktr.ee/HonoluluCheese" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v18M5 8l7-5 7 5M6 14h12"/></svg>
+        <b>Linktree</b><span>linktr.ee/HonoluluCheese</span></a>
+    </div>
+  </section>
+
+  <section id="episodes" aria-labelledby="eps-h">
+    <div class="sec-head"><h2 id="eps-h">Episodes</h2><span class="note">The play-by-play, newest first</span></div>
+    <div class="filters" role="group" aria-label="Filter by team">
+      <button class="chip" id="f-all" data-f="all" aria-pressed="true">All</button>
+      <button class="chip" id="f-lions" data-f="l" aria-pressed="false">Lions</button>
+      <button class="chip" id="f-packers" data-f="p" aria-pressed="false">Packers</button>
+      <button class="chip" id="f-bears" data-f="b" aria-pressed="false">Bears</button>
+    </div>
+    <ol class="eps" id="eps"></ol>
+    <div class="more"><a class="btn" href="https://honolulucheese.buzzsprout.com/" target="_blank" rel="noopener"><span id="all-count">See all 123 episodes →</span></a></div>
+  </section>
+
+  <section id="ask" aria-labelledby="ask-h">
+    <div class="ask">
+      <div class="pitch">
+        <h2 id="ask-h">Ask Da HCP</h2>
+        <p>Got a hot take, a trade idea, or a question you want the crew to argue about on air? Send it in and it might make the next episode.</p>
+        <p>Fill this out, then send it to the show on Instagram or X. Tag it <b style="color:var(--chalk)">#AskDaHCP</b> so they can find it.</p>
+        <div class="tagline">Your take. On the show.</div>
+      </div>
+      <div>
+        <form id="ask-form" novalidate>
+          <div class="row2">
+            <label for="ask-name">Your name or handle<input id="ask-name" name="name" autocomplete="nickname" placeholder="e.g. Cheesehead Kai"></label>
+            <label for="ask-team">Your team<select id="ask-team" name="team">
+              <option value="">Pick one</option><option>Lions</option><option>Packers</option><option>Bears</option><option>Vikings</option><option>Other NFL team</option>
+            </select></label>
+          </div>
+          <label for="ask-type">What is it?<select id="ask-type" name="type">
+            <option>Question for the crew</option><option>Topic idea</option><option>Hot take to debate</option><option>Prediction</option>
+          </select></label>
+          <label for="ask-msg">Your question or topic<textarea id="ask-msg" name="msg" maxlength="600" placeholder="Is this finally the year the Lions win the North back-to-back?"></textarea></label>
+          <p class="err" id="ask-err" hidden>Write your question or topic first.</p>
+          <button class="btn" type="submit">Get it ready to send</button>
+        </form>
+        <div class="sent" id="ask-sent" hidden>
+          <b>Ready to send</b>
+          <pre id="ask-out"></pre>
+          <div class="acts">
+            <button class="btn" type="button" id="ask-copy">Copy message</button>
+            <a class="btn alt" href="https://ig.me/m/honolulucheesepodcast" target="_blank" rel="noopener">DM on Instagram</a>
+            <a class="btn alt" id="ask-x" href="https://x.com/HonoluluCheese" target="_blank" rel="noopener">Post on X</a>
+          </div>
+          <p class="hint" id="ask-hint">Copy it, then paste it into a DM to @honolulucheesepodcast on Instagram. Or post it on X, where it's already written with @HonoluluCheese tagged.</p>
+          <button class="btn alt" type="button" id="ask-again" style="justify-self:start;background:transparent;color:var(--chalk-dim);border:0;padding-left:0">Write another</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="crew" aria-labelledby="crew-h">
+    <div class="sec-head"><h2 id="crew-h">The crew</h2></div>
+    <div class="hosts">
+      <div class="host"><div class="av">R</div><div><b>Ryan Aboulhosn</b><span>Host</span></div></div>
+      <div class="host"><div class="av">M</div><div><b>Miran Aboulhosn</b><span>Host</span></div></div>
+      <div class="host"><div class="av">M</div><div><b>Matt Young</b><span>Host</span></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <a class="mark" href="#top">Da Honolulu Cheese Podcast</a>
+    <span>Lions · Packers · Bears · and everything else NFL</span>
+  </footer>
+</div>
+
+<script id="episodes-data" type="application/json">
+{
+  "episodes": [
+    {
+      "number": 123,
+      "title": "Packers Stunned! Lions Win a Fun One, Bears Make a Statement",
+      "date": "2026-09-30",
+      "url": "https://honolulucheese.buzzsprout.com/2299439/episodes/19885221-packers-stunned-lions-win-a-fun-one-bears-make-a-statement-ep-123"
+    },
+    {
+      "number": 122,
+      "title": "Lions get Humbled, Bears Stumble, Packers end the Losing Streak!",
+      "date": "2026-09-24",
+      "url": "https://honolulucheese.buzzsprout.com/2299439/episodes/19856214-lions-get-humbled-bears-stumble-packers-end-the-losing-streak-ep-122"
+    },
+    {
+      "number": 121,
+      "title": "Bears SMASH, Lions Survive, Packers Stumble. Week 1 Recap!",
+      "date": "2026-09-16",
+      "url": "https://honolulucheese.buzzsprout.com/2299439/episodes/19813600-bears-smash-lions-survive-packers-stumble-week-1-recap-ep-121"
+    },
+    {
+      "number": 120,
+      "title": "Wake Up! It's Football! Awards Prediction Show",
+      "date": "2026-09-09",
+      "url": "https://honolulucheese.buzzsprout.com/2299439/episodes/19776187-wake-up-it-s-football-awards-prediction-show-ep-120"
+    },
+    {
+      "number": 119,
+      "title": "It Reeks Like Football in Here (NFC North Preview)!",
+      "date": "2026-09-05",
+      "url": "https://honolulucheese.buzzsprout.com/2299439/episodes/19757844-it-reeks-like-football-in-here-nfc-north-preview-ep-119"
+    },
+    {
+      "number": 118,
+      "title": "Training Camp Kicks Off!",
+      "date": "2026-07-30",
+      "url": "https://podcasts.apple.com/us/podcast/da-honolulu-cheese-podcast/id1725228146"
+    },
+    {
+      "number": 117,
+      "title": "A Mid Summer Check-In with DA HCP",
+      "date": "2026-07-17",
+      "url": "https://podcasts.apple.com/us/podcast/da-honolulu-cheese-podcast/id1725228146"
+    },
+    {
+      "number": 116,
+      "title": "DA HCP Returns! TRADES!! And some FACT or FICTION",
+      "date": "2026-06-03",
+      "url": "https://podcasts.apple.com/us/podcast/da-honolulu-cheese-podcast/id1725228146"
+    }
+  ]
+}
+</script>
+<script id="records-data" type="application/json">
+{
+  "season": 2026,
+  "updatedAfter": "Week 3",
+  "updatedOn": "2026-09-30",
+  "teams": [
+    { "code": "MIN", "name": "Vikings", "w": 3, "l": 0, "t": 0, "recent": ["W","W","W"] },
+    { "code": "DET", "name": "Lions",   "w": 2, "l": 1, "t": 0, "recent": ["W","L","W"] },
+    { "code": "CHI", "name": "Bears",   "w": 2, "l": 1, "t": 0, "recent": ["W","L","W"] },
+    { "code": "GB",  "name": "Packers", "w": 1, "l": 2, "t": 0, "recent": ["L","W","L"] }
+  ]
+}
+</script>
+<script>
+/* ---------- episodes ---------- */
+const NAMES = { l: "Lions", p: "Packers", b: "Bears" };
+const fmtShort = iso => new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+const fmtLong = iso => new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+const safeUrl = u => /^https?:\/\//i.test(u || "") ? u : "https://honolulucheese.buzzsprout.com/";
+function teams(ep) {
+  const s = ep.t.toLowerCase(), out = [];
+  if (s.includes("lions")) out.push("l");
+  if (s.includes("packers")) out.push("p");
+  if (s.includes("bears")) out.push("b");
+  return out.length ? out : ["l", "p", "b"];
+}
+let EPS = [], FILTER = "all";
+function setEpisodes(raw) {
+  const byNum = new Map(EPS.map(e => [e.n, e]));
+  raw.forEach(e => {
+    if (!e || !e.title || !e.date || !Number.isFinite(+e.number)) return;
+    byNum.set(+e.number, { n: +e.number, t: String(e.title), iso: String(e.date).slice(0, 10), u: safeUrl(e.url) });
+  });
+  EPS = [...byNum.values()].sort((a, b) => b.n - a.n).slice(0, 12);
+  EPS.forEach(e => e.d = fmtShort(e.iso));
+  if (!EPS.length) return;
+  const L = EPS[0];
+  document.getElementById("latest-tag").textContent = "Ep. " + L.n;
+  document.getElementById("latest-title").textContent = L.t;
+  document.getElementById("latest-date").textContent = fmtLong(L.iso);
+  document.getElementById("latest-play").href = L.u;
+  document.getElementById("all-count").textContent = "See all " + L.n + " episodes →";
+  document.querySelectorAll(".board .k").forEach(k => { if (k.textContent === "Episodes") k.nextElementSibling.textContent = L.n; });
+  renderList();
+}
+function renderList() {
+  const list = document.getElementById("eps");
+  const rows = EPS.slice(0, 10).filter(e => FILTER === "all" || teams(e).includes(FILTER));
+  list.innerHTML = rows.length ? rows.map(e => {
+    const tm = teams(e).map(k => `<span class="dot ${k}" title="${NAMES[k]}"></span>`).join("");
+    return `<li class="ep"><div class="num"><small>EP.</small>${e.n}</div>
+      <div class="t"><a href="${esc(e.u)}" target="_blank" rel="noopener">${esc(e.t)}</a>
+      <div class="d"><span>${e.d}</span>${tm}</div></div>
+      <a class="go" href="${esc(e.u)}" target="_blank" rel="noopener" aria-label="Listen to episode ${e.n}">Listen ›</a></li>`;
+  }).join("") : `<li class="empty">No recent episodes for that team.</li>`;
+}
+document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  FILTER = b.dataset.f; renderList();
+}));
+
+/* ---------- records ---------- */
+function renderRecords(R) {
+  const COL = { DET: "var(--lions-blue)", GB: "var(--gb-gold)", CHI: "var(--chi-orange)", MIN: "#7b4fb3" };
+  const pct = t => (t.w + t.t / 2) / Math.max(1, t.w + t.l + t.t);
+  const same = (a, b) => pct(a) === pct(b) && a.w === b.w;
+  const list = R.teams.slice().sort((a, b) => pct(b) - pct(a) || b.w - a.w);
+  const ord = n => n + (["th", "st", "nd", "rd"][n] || "th");
+  const rec = t => t.w + "–" + t.l + (t.t ? "–" + t.t : "");
+  const place = t => list.findIndex(x => same(x, t)) + 1;
+  list.forEach(t => {
+    const tied = list.filter(x => same(x, t)).length > 1;
+    const r = document.querySelector('.rec[data-team="' + t.code + '"] .wl'); if (r) r.textContent = rec(t);
+    const p = document.querySelector('[data-place="' + t.code + '"]'); if (p) p.textContent = (tied ? "T-" : "") + ord(place(t)) + " in the NFC North";
+  });
+  document.getElementById("stand-body").innerHTML = list.map(t =>
+    `<tr><td class="n">${place(t)}</td><td class="t"><i style="background:${COL[t.code] || "var(--chalk-dim)"}"></i>${esc(t.name)}</td><td>${t.w}</td><td>${t.l}</td><td>${t.t}</td><td>${(t.recent || []).slice(-5).map(esc).join(" ") || "–"}</td></tr>`
+  ).join("");
+  const d = new Date(R.updatedOn + "T12:00:00");
+  document.getElementById("stand-upd").textContent = R.season + " season · updated after " + R.updatedAfter + " (" + d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ")";
+}
+const validRecords = R => R && Array.isArray(R.teams) && R.teams.length === 4 &&
+  R.teams.every(t => t && t.code && Number.isFinite(t.w) && Number.isFinite(t.l) && Number.isFinite(t.t));
+
+/* ---------- start: saved data first, then live data from /api/live ---------- */
+try { setEpisodes(JSON.parse(document.getElementById("episodes-data").textContent).episodes || []); } catch (e) {}
+try { const R = JSON.parse(document.getElementById("records-data").textContent); if (validRecords(R)) renderRecords(R); } catch (e) {}
+(async function loadLive() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  try {
+    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch("/api/live", { signal: ctl.signal, headers: { accept: "application/json" } });
+    if (!r.ok || !(r.headers.get("content-type") || "").includes("json")) return;
+    const j = await r.json();
+    if (Array.isArray(j.episodes) && j.episodes.length) setEpisodes(j.episodes);
+    if (validRecords(j.records)) { renderRecords(j.records); return; }
+  } catch (e) { /* keep the saved data */ }
+  // Backup: ask ESPN straight from the visitor's browser.
+  try { const R = await recordsFromEspn(); if (validRecords(R)) renderRecords(R); } catch (e) { /* keep the saved data */ }
+})();
+
+async function recordsFromEspn() {
+  const T = [["DET", "det", "Lions"], ["GB", "gb", "Packers"], ["CHI", "chi", "Bears"], ["MIN", "min", "Vikings"]];
+  let lastWeek = 0, season = null;
+  const teams = await Promise.all(T.map(async ([code, slug, name]) => {
+    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch("https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/" + slug + "/schedule", { signal: ctl.signal });
+    if (!r.ok) throw new Error(code + " " + r.status);
+    const j = await r.json();
+    const me = String(j.team && j.team.id);
+    season = season || (j.requestedSeason && j.requestedSeason.year) || (j.season && j.season.year);
+    let w = 0, l = 0, t = 0; const recent = [];
+    (j.events || []).filter(e => {
+      const st = e.seasonType || (e.season && e.season.type);
+      return Number(st && typeof st === "object" ? (st.type || st.id) : (st || 2)) === 2;
+    }).map(e => ({ e, c: (e.competitions || [])[0] }))
+      .filter(x => x.c && x.c.status && x.c.status.type && x.c.status.type.completed)
+      .sort((a, b) => new Date(a.e.date) - new Date(b.e.date))
+      .forEach(({ e, c }) => {
+        const mine = (c.competitors || []).find(x => String(x.id || (x.team && x.team.id)) === me);
+        const opp = (c.competitors || []).find(x => x !== mine);
+        if (!mine || !opp) return;
+        const sc = x => Number(x.score && typeof x.score === "object" ? x.score.value : x.score) || 0;
+        const res = mine.winner === true ? "W" : opp.winner === true ? "L" : sc(mine) > sc(opp) ? "W" : sc(mine) < sc(opp) ? "L" : "T";
+        if (res === "W") w++; else if (res === "L") l++; else t++;
+        recent.push(res);
+        if (e.week && e.week.number) lastWeek = Math.max(lastWeek, e.week.number);
+      });
+    const sm = /^(\d+)-(\d+)(?:-(\d+))?$/.exec(((j.team && j.team.recordSummary) || "").trim());
+    if (sm) { w = +sm[1]; l = +sm[2]; t = +(sm[3] || 0); }
+    return { code, name, w, l, t, recent };
+  }));
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  return { season: season || new Date().getFullYear(), updatedAfter: lastWeek ? "Week " + lastWeek : "the latest games", updatedOn: today, teams };
+}
+
+(function () {
+  const f = document.getElementById("ask-form"), sent = document.getElementById("ask-sent"), out = document.getElementById("ask-out"), err = document.getElementById("ask-err");
+  f.addEventListener("submit", e => {
+    e.preventDefault();
+    const msg = f.msg.value.trim();
+    if (!msg) { err.hidden = false; f.msg.focus(); return; }
+    err.hidden = true;
+    const who = f.name.value.trim(), team = f.team.value;
+    const text = `#AskDaHCP (${f.type.value})\n${msg}\n— ${who || "A listener"}${team ? " · " + team + " fan" : ""}`;
+    out.textContent = text;
+    document.getElementById("ask-x").href = "https://x.com/intent/post?text=" + encodeURIComponent("@HonoluluCheese " + text);
+    f.hidden = true; sent.hidden = false;
+  });
+  document.getElementById("ask-copy").addEventListener("click", async () => {
+    const b = document.getElementById("ask-copy");
+    try { await navigator.clipboard.writeText(out.textContent); b.textContent = "Copied"; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(out); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected, press copy"; }
+    setTimeout(() => b.textContent = "Copy message", 2500);
+  });
+  document.getElementById("ask-again").addEventListener("click", () => { f.reset(); sent.hidden = true; f.hidden = false; f.msg.focus(); });
+})();
+</script>
+
+</body>
+</html>
