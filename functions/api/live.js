@@ -4,19 +4,30 @@
 // The page falls back to the data saved inside index.html if this fails.
 
 const FEED_URL = "https://feeds.buzzsprout.com/2299439.rss";
-const ESPN_TEAM = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/";
+const SHOW_PAGE = "https://honolulucheese.buzzsprout.com/";
+const ESPN_HOSTS = [
+  "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/",
+  "https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/teams/",
+];
 const TEAMS = [
-  { code: "DET", espn: "det", name: "Lions" },
-  { code: "GB", espn: "gb", name: "Packers" },
-  { code: "CHI", espn: "chi", name: "Bears" },
-  { code: "MIN", espn: "min", name: "Vikings" },
+  { code: "DET", espn: "det", id: 8, name: "Lions" },
+  { code: "GB", espn: "gb", id: 9, name: "Packers" },
+  { code: "CHI", espn: "chi", id: 3, name: "Bears" },
+  { code: "MIN", espn: "min", id: 16, name: "Vikings" },
 ];
 const CACHE_SECONDS = 600; // refresh at most every 10 minutes
 const UA = { "user-agent": "dahcp.com site (+https://dahcp.com)" };
+const BROWSER = {
+  "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36",
+  "accept": "application/json,text/plain,*/*",
+  "accept-language": "en-US,en;q=0.9",
+  "referer": "https://www.espn.com/",
+};
+const LAST_GOOD = "/api/live?cache=last-good-records";
 
 export async function onRequestGet(context) {
   const cache = typeof caches !== "undefined" ? caches.default : null;
-  const cacheKey = new Request(new URL("/api/live?cache=v1", context.request.url).toString());
+  const cacheKey = new Request(new URL("/api/live?cache=v2", context.request.url).toString());
   if (cache) {
     const hit = await cache.match(cacheKey);
     if (hit) return hit;
@@ -56,8 +67,12 @@ async function getEpisodes() {
     const title = rawTitle.replace(/\s*[|\-–—:]\s*EP\.?\s*#?\s*\d+\s*$/i, "").trim() || rawTitle;
     const pub = new Date(tag(c, "pubDate"));
     const date = isNaN(pub) ? "" : pub.toISOString().slice(0, 10);
-    let url = tag(c, "link");
-    if (!/^https?:\/\//i.test(url)) url = "https://honolulucheese.buzzsprout.com/";
+    // Each episode's own page: https://honolulucheese.buzzsprout.com/2299439/episodes/<id>
+    const encl = (c.match(/<enclosure[^>]*url="([^"]+)"/i) || [])[1] || "";
+    const ids = (tag(c, "guid") + " " + encl + " " + tag(c, "link")).match(/\d{6,}/g) || [];
+    const epId = ids.find(x => x !== "2299439");
+    let url = epId ? SHOW_PAGE + "2299439/episodes/" + epId : tag(c, "link");
+    if (!/^https?:\/\//i.test(url)) url = SHOW_PAGE;
     return { number, title, date, url };
   }).filter(e => e.title && e.date);
   // Titles normally end in "EP. 123"; if one doesn't, number it from its neighbours.
@@ -88,7 +103,61 @@ function decode(s) {
 /* ---------- records (ESPN team schedules) ---------- */
 
 async function getRecords() {
-  const teams = await Promise.all(TEAMS.map(getTeam));
+  const cache = typeof caches !== "undefined" ? caches.default : null;
+  const key = new Request("https://dahcp.com" + LAST_GOOD);
+  try {
+    const fresh = await getRecordsFresh();
+    if (cache) await cache.put(key, new Response(JSON.stringify(fresh), {
+      headers: { "content-type": "application/json", "cache-control": "public, s-maxage=2592000" },
+    }));
+    return fresh;
+  } catch (err) {
+    // ESPN refused or changed: fall back to the last records that loaded fine.
+    const old = cache && await cache.match(key);
+    if (old) return await old.json();
+    throw err;
+  }
+}
+
+async function getRecordsFresh() {
+  try { return await getRecordsEspn(); }
+  catch (espnErr) {
+    try { return await getRecordsSportsDb(); }
+    catch (dbErr) { throw new Error(espnErr.message + " / backup: " + dbErr.message); }
+  }
+}
+
+// Backup source: TheSportsDB league table (NFL league id 4391).
+async function getRecordsSportsDb() {
+  const year = new Date().getFullYear();
+  for (const season of [String(year), String(year - 1)]) {
+    const r = await fetch("https://www.thesportsdb.com/api/v1/json/3/lookuptable.php?l=4391&s=" + season, { headers: BROWSER, cf: { cacheTtl: CACHE_SECONDS } });
+    if (!r.ok) continue;
+    const j = await r.json().catch(() => null);
+    const rows = (j && j.table) || [];
+    const full = { DET: "Detroit Lions", GB: "Green Bay Packers", CHI: "Chicago Bears", MIN: "Minnesota Vikings" };
+    const teams = TEAMS.map(t => {
+      const row = rows.find(x => (x.strTeam || "").toLowerCase() === full[t.code].toLowerCase());
+      if (!row) return null;
+      const w = parseInt(row.intWin, 10), l = parseInt(row.intLoss, 10), d = parseInt(row.intDraw || "0", 10);
+      if (![w, l, d].every(Number.isFinite)) return null;
+      return { code: t.code, name: t.name, w, l, t: d, recent: [] };
+    });
+    if (teams.every(Boolean) && teams.some(t => t.w + t.l + t.t > 0)) {
+      return {
+        season: parseInt(season, 10),
+        updatedAfter: "the latest games",
+        updatedOn: new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" }),
+        teams,
+      };
+    }
+  }
+  throw new Error("TheSportsDB had no usable table");
+}
+
+async function getRecordsEspn() {
+  const teams = [];
+  for (const t of TEAMS) teams.push(await getTeam(t)); // one at a time, gentler on ESPN
   const weeks = teams.map(t => t.lastWeek).filter(Boolean);
   const season = teams.map(t => t.season).find(Boolean) || new Date().getFullYear();
   return {
@@ -100,9 +169,18 @@ async function getRecords() {
 }
 
 async function getTeam(team) {
-  const r = await fetch(ESPN_TEAM + team.espn + "/schedule", { headers: UA, cf: { cacheTtl: CACHE_SECONDS } });
-  if (!r.ok) throw new Error(team.code + " schedule HTTP " + r.status);
-  const j = await r.json();
+  let j = null, lastErr = "";
+  outer: for (const host of ESPN_HOSTS) {
+    for (const slug of [team.espn, team.id]) {
+      try {
+        const r = await fetch(host + slug + "/schedule", { headers: BROWSER, cf: { cacheTtl: CACHE_SECONDS } });
+        if (!r.ok) { lastErr = "HTTP " + r.status; continue; }
+        j = await r.json();
+        if (j && j.team) break outer;
+      } catch (e) { lastErr = String(e); }
+    }
+  }
+  if (!j || !j.team) throw new Error(team.code + " schedule " + lastErr);
   const myId = String((j.team && j.team.id) || "");
   if (!myId) throw new Error(team.code + ": no team id");
 
