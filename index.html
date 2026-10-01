@@ -530,48 +530,6 @@ footer .mark { color: var(--chalk); }
   ]
 }
 </script>
-<script>
-let EPS = [];
-try { EPS = JSON.parse(document.getElementById("episodes-data").textContent).episodes.map(e => ({ n: e.number, t: e.title, iso: e.date, u: e.url })); } catch (e) {}
-EPS.sort((a, b) => b.n - a.n);
-const fmtShort = iso => new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-const fmtLong = iso => new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-EPS.forEach(e => e.d = fmtShort(e.iso));
-if (EPS.length) {
-  const L = EPS[0];
-  document.getElementById("latest-tag").textContent = "Ep. " + L.n;
-  document.getElementById("latest-title").textContent = L.t;
-  document.getElementById("latest-date").textContent = fmtLong(L.iso);
-  document.getElementById("latest-play").href = L.u;
-  document.getElementById("all-count").textContent = "See all " + L.n + " episodes →";
-  document.querySelectorAll(".board .v").forEach(v => { if (v.previousElementSibling && v.previousElementSibling.textContent === "Episodes") v.textContent = L.n; });
-}
-const NAMES = { l: "Lions", p: "Packers", b: "Bears" };
-function teams(ep) {
-  const s = ep.t.toLowerCase(), out = [];
-  if (s.includes("lions")) out.push("l");
-  if (s.includes("packers")) out.push("p");
-  if (s.includes("bears")) out.push("b");
-  return out.length ? out : ["l", "p", "b"];
-}
-const list = document.getElementById("eps");
-function esc(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
-function render(f) {
-  const rows = EPS.slice(0, 10).filter(e => f === "all" || teams(e).includes(f));
-  list.innerHTML = rows.length ? rows.map(e => {
-    const tm = teams(e).map(k => `<span class="dot ${k}" title="${NAMES[k]}"></span>`).join("");
-    return `<li class="ep"><div class="num"><small>EP.</small>${e.n}</div>
-      <div class="t"><a href="${e.u}" target="_blank" rel="noopener">${esc(e.t)}</a>
-      <div class="d"><span>${e.d}</span>${tm}</div></div>
-      <a class="go" href="${e.u}" target="_blank" rel="noopener" aria-label="Listen to episode ${e.n}">Listen ›</a></li>`;
-  }).join("") : `<li class="empty">No recent episodes for that team.</li>`;
-}
-document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
-  document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
-  render(b.dataset.f);
-}));
-render("all");
-</script>
 <script id="records-data" type="application/json">
 {
   "season": 2026,
@@ -586,25 +544,90 @@ render("all");
 }
 </script>
 <script>
-(function () {
-  let R; try { R = JSON.parse(document.getElementById("records-data").textContent); } catch (e) { return; }
+/* ---------- episodes ---------- */
+const NAMES = { l: "Lions", p: "Packers", b: "Bears" };
+const fmtShort = iso => new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+const fmtLong = iso => new Date(iso + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+const safeUrl = u => /^https?:\/\//i.test(u || "") ? u : "https://honolulucheese.buzzsprout.com/";
+function teams(ep) {
+  const s = ep.t.toLowerCase(), out = [];
+  if (s.includes("lions")) out.push("l");
+  if (s.includes("packers")) out.push("p");
+  if (s.includes("bears")) out.push("b");
+  return out.length ? out : ["l", "p", "b"];
+}
+let EPS = [], FILTER = "all";
+function setEpisodes(raw) {
+  const byNum = new Map(EPS.map(e => [e.n, e]));
+  raw.forEach(e => {
+    if (!e || !e.title || !e.date || !Number.isFinite(+e.number)) return;
+    byNum.set(+e.number, { n: +e.number, t: String(e.title), iso: String(e.date).slice(0, 10), u: safeUrl(e.url) });
+  });
+  EPS = [...byNum.values()].sort((a, b) => b.n - a.n).slice(0, 12);
+  EPS.forEach(e => e.d = fmtShort(e.iso));
+  if (!EPS.length) return;
+  const L = EPS[0];
+  document.getElementById("latest-tag").textContent = "Ep. " + L.n;
+  document.getElementById("latest-title").textContent = L.t;
+  document.getElementById("latest-date").textContent = fmtLong(L.iso);
+  document.getElementById("latest-play").href = L.u;
+  document.getElementById("all-count").textContent = "See all " + L.n + " episodes →";
+  document.querySelectorAll(".board .k").forEach(k => { if (k.textContent === "Episodes") k.nextElementSibling.textContent = L.n; });
+  renderList();
+}
+function renderList() {
+  const list = document.getElementById("eps");
+  const rows = EPS.slice(0, 10).filter(e => FILTER === "all" || teams(e).includes(FILTER));
+  list.innerHTML = rows.length ? rows.map(e => {
+    const tm = teams(e).map(k => `<span class="dot ${k}" title="${NAMES[k]}"></span>`).join("");
+    return `<li class="ep"><div class="num"><small>EP.</small>${e.n}</div>
+      <div class="t"><a href="${esc(e.u)}" target="_blank" rel="noopener">${esc(e.t)}</a>
+      <div class="d"><span>${e.d}</span>${tm}</div></div>
+      <a class="go" href="${esc(e.u)}" target="_blank" rel="noopener" aria-label="Listen to episode ${e.n}">Listen ›</a></li>`;
+  }).join("") : `<li class="empty">No recent episodes for that team.</li>`;
+}
+document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  FILTER = b.dataset.f; renderList();
+}));
+
+/* ---------- records ---------- */
+function renderRecords(R) {
   const COL = { DET: "var(--lions-blue)", GB: "var(--gb-gold)", CHI: "var(--chi-orange)", MIN: "#7b4fb3" };
   const pct = t => (t.w + t.t / 2) / Math.max(1, t.w + t.l + t.t);
-  const teams = R.teams.slice().sort((a, b) => pct(b) - pct(a) || b.w - a.w);
-  const ord = n => n + (["th","st","nd","rd"][n] || "th");
+  const same = (a, b) => pct(a) === pct(b) && a.w === b.w;
+  const list = R.teams.slice().sort((a, b) => pct(b) - pct(a) || b.w - a.w);
+  const ord = n => n + (["th", "st", "nd", "rd"][n] || "th");
   const rec = t => t.w + "–" + t.l + (t.t ? "–" + t.t : "");
-  teams.forEach((t, i) => {
-    const place = teams.findIndex(x => pct(x) === pct(t) && x.w === t.w) + 1;
-    const tied = teams.filter(x => pct(x) === pct(t) && x.w === t.w).length > 1;
+  const place = t => list.findIndex(x => same(x, t)) + 1;
+  list.forEach(t => {
+    const tied = list.filter(x => same(x, t)).length > 1;
     const r = document.querySelector('.rec[data-team="' + t.code + '"] .wl'); if (r) r.textContent = rec(t);
-    const p = document.querySelector('[data-place="' + t.code + '"]'); if (p) p.textContent = (tied ? "T-" : "") + ord(place) + " in the NFC North";
+    const p = document.querySelector('[data-place="' + t.code + '"]'); if (p) p.textContent = (tied ? "T-" : "") + ord(place(t)) + " in the NFC North";
   });
-  document.getElementById("stand-body").innerHTML = teams.map((t, i) => {
-    const place = teams.findIndex(x => pct(x) === pct(t) && x.w === t.w) + 1;
-    return `<tr><td class="n">${place}</td><td class="t"><i style="background:${COL[t.code] || "var(--chalk-dim)"}"></i>${t.name}</td><td>${t.w}</td><td>${t.l}</td><td>${t.t}</td><td>${(t.recent || []).slice(-5).join(" ")}</td></tr>`;
-  }).join("");
+  document.getElementById("stand-body").innerHTML = list.map(t =>
+    `<tr><td class="n">${place(t)}</td><td class="t"><i style="background:${COL[t.code] || "var(--chalk-dim)"}"></i>${esc(t.name)}</td><td>${t.w}</td><td>${t.l}</td><td>${t.t}</td><td>${(t.recent || []).slice(-5).map(esc).join(" ")}</td></tr>`
+  ).join("");
   const d = new Date(R.updatedOn + "T12:00:00");
   document.getElementById("stand-upd").textContent = R.season + " season · updated after " + R.updatedAfter + " (" + d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ")";
+}
+const validRecords = R => R && Array.isArray(R.teams) && R.teams.length === 4 &&
+  R.teams.every(t => t && t.code && Number.isFinite(t.w) && Number.isFinite(t.l) && Number.isFinite(t.t));
+
+/* ---------- start: saved data first, then live data from /api/live ---------- */
+try { setEpisodes(JSON.parse(document.getElementById("episodes-data").textContent).episodes || []); } catch (e) {}
+try { const R = JSON.parse(document.getElementById("records-data").textContent); if (validRecords(R)) renderRecords(R); } catch (e) {}
+(async function loadLive() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  try {
+    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch("/api/live", { signal: ctl.signal, headers: { accept: "application/json" } });
+    if (!r.ok || !(r.headers.get("content-type") || "").includes("json")) return;
+    const j = await r.json();
+    if (Array.isArray(j.episodes) && j.episodes.length) setEpisodes(j.episodes);
+    if (validRecords(j.records)) renderRecords(j.records);
+  } catch (e) { /* keep the saved data */ }
 })();
 
 (function () {
