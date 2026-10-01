@@ -211,6 +211,8 @@ h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(28px, 4.5
 .sent .acts .btn { background: var(--chalk); color: var(--turf); border: 0; cursor: pointer; }
 .sent .acts .btn.alt { background: transparent; color: var(--chalk); border: 2px solid var(--line); }
 .sent .hint { font-size: 14px; color: var(--chalk-dim); margin: 0; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+#ask-submit[disabled] { opacity: .6; cursor: wait; }
 .hi-note { margin-top: 16px; color: var(--chalk-dim); font-size: 15px; max-width: 70ch; }
 .hi-note b { color: var(--lions); }
 
@@ -428,7 +430,7 @@ footer .mark { color: var(--chalk); }
       <div class="pitch">
         <h2 id="ask-h">Ask Da HCP</h2>
         <p>Got a hot take, a trade idea, or a question you want the crew to argue about on air? Send it in and it might make the next episode.</p>
-        <p>Fill this out, then send it to the show on Instagram or X. Tag it <b style="color:var(--chalk)">#AskDaHCP</b> so they can find it.</p>
+        <p>Hit send and it goes straight to the crew. Leave your email if you want a reply.</p>
         <div class="tagline">Your take. On the show.</div>
       </div>
       <div>
@@ -442,12 +444,19 @@ footer .mark { color: var(--chalk); }
           <label for="ask-type">What is it?<select id="ask-type" name="type">
             <option>Question for the crew</option><option>Topic idea</option><option>Hot take to debate</option><option>Prediction</option>
           </select></label>
+          <label for="ask-email">Your email (optional, if you want a reply)<input id="ask-email" name="email" type="email" autocomplete="email" placeholder="you@example.com"></label>
+          <div class="hp" aria-hidden="true"><label for="ask-website">Leave this empty<input id="ask-website" name="website" tabindex="-1" autocomplete="off"></label></div>
           <label for="ask-msg">Your question or topic<textarea id="ask-msg" name="msg" maxlength="600" placeholder="Is this finally the year the Lions win the North back-to-back?"></textarea></label>
           <p class="err" id="ask-err" hidden>Write your question or topic first.</p>
-          <button class="btn" type="submit">Get it ready to send</button>
+          <button class="btn" type="submit" id="ask-submit">Send question</button>
         </form>
+        <div class="sent" id="ask-done" hidden>
+          <b>Sent! Thanks for the question.</b>
+          <p class="hint">It's in the crew's inbox. Listen for it on an upcoming episode.</p>
+          <button class="btn alt" type="button" id="ask-another" style="justify-self:start;background:transparent;color:var(--chalk-dim);border:0;padding-left:0">Send another</button>
+        </div>
         <div class="sent" id="ask-sent" hidden>
-          <b>Ready to send</b>
+          <b id="ask-sent-h">Ready to send</b>
           <pre id="ask-out"></pre>
           <div class="acts">
             <button class="btn" type="button" id="ask-copy">Copy message</button>
@@ -669,17 +678,33 @@ async function recordsFromEspn() {
 
 (function () {
   const f = document.getElementById("ask-form"), sent = document.getElementById("ask-sent"), out = document.getElementById("ask-out"), err = document.getElementById("ask-err");
-  f.addEventListener("submit", e => {
+  const started = Date.now(), btn = document.getElementById("ask-submit"), done = document.getElementById("ask-done");
+  f.addEventListener("submit", async e => {
     e.preventDefault();
     const msg = f.msg.value.trim();
-    if (!msg) { err.hidden = false; f.msg.focus(); return; }
+    if (!msg) { err.textContent = "Write your question or topic first."; err.hidden = false; f.msg.focus(); return; }
     err.hidden = true;
     const who = f.name.value.trim(), team = f.team.value;
     const text = `#AskDaHCP (${f.type.value})\n${msg}\n— ${who || "A listener"}${team ? " · " + team + " fan" : ""}`;
-    out.textContent = text;
-    document.getElementById("ask-x").href = "https://x.com/intent/post?text=" + encodeURIComponent("@HonoluluCheese " + text);
-    f.hidden = true; sent.hidden = false;
+    btn.disabled = true; btn.textContent = "Sending…";
+    try {
+      if (!/^https?:$/.test(location.protocol)) throw new Error("offline");
+      const ctl = new AbortController(); setTimeout(() => ctl.abort(), 10000);
+      const r = await fetch("/api/ask", { method: "POST", signal: ctl.signal, headers: { "content-type": "application/json" },
+        body: JSON.stringify({ name: who, team, type: f.type.value, msg, email: f.email.value.trim(), website: f.website.value, started }) });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.ok) { f.hidden = true; done.hidden = false; return; }
+      if (r.status === 400 && j.message) { err.textContent = j.message; err.hidden = false; return; }
+      throw new Error("send failed");
+    } catch (x) {
+      // Couldn't send directly: fall back to sending it on Instagram or X.
+      document.getElementById("ask-sent-h").textContent = "Couldn't send it directly. Send it this way instead:";
+      out.textContent = text;
+      document.getElementById("ask-x").href = "https://x.com/intent/post?text=" + encodeURIComponent("@HonoluluCheese " + text);
+      f.hidden = true; sent.hidden = false;
+    } finally { btn.disabled = false; btn.textContent = "Send question"; }
   });
+  document.getElementById("ask-another").addEventListener("click", () => { f.reset(); done.hidden = true; f.hidden = false; f.msg.focus(); });
   document.getElementById("ask-copy").addEventListener("click", async () => {
     const b = document.getElementById("ask-copy");
     try { await navigator.clipboard.writeText(out.textContent); b.textContent = "Copied"; }
